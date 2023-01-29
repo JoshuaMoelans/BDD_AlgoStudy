@@ -72,18 +72,18 @@ def getSuccessors(state:State):
         elif processLine == 2 or processLine == 3:
             condition = ns.last_to_enter[l] == i  # last_to_enter[l] == i
             for k in range(len(ns.levels)):
-                condition = condition & ns.levels[k] >= l  # levels[k] >= l
-            if not condition:  # if while condition not met, we can go to next iteration
-                if l+1 != ns.n-2:  # if we are not at the last iteration, we can go to next iteration
+                condition = condition & (ns.levels[k] >= l)  # levels[k] >= l
+            if not condition:  # if while condition NOT met, we can go to next iteration OR to critical section
+                if l+1 != ns.n-1:  # if we are not at the last iteration, we can go to next iteration
                     ns.process_states[i]["line"] = 0
                     ns.process_states[i]["it"] = l + 1
                 else:  # if we are at the last iteration, we can enter the critical section
+                    ns.process_states[i]["status"] = "critical"
                     ns.process_states[i]["line"] = 4
             else:
                 ns.process_states[i]["status"] = "wait"
-                ns.process_states[i]["line"] = processLine + 1
+                ns.process_states[i]["line"] = 3
         elif processLine == 4:
-            ns.process_states[i]["status"] = "critical"
             ns.process_states[i]["line"] = processLine + 1
         elif processLine == 5:
             ns.levels[i] = -1  # levels[i] = -1
