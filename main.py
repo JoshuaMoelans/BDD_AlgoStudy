@@ -56,6 +56,12 @@ def constructChildState(state:State):
 def getSuccessors(state:State):
     parentId = state.id
     sc = []
+    testState = State(2)
+    testState.levels = [0,0]
+    testState.last_to_enter = [1]
+    testState.process_states = [{"it":0,"line":2,"status":"exec"},{"it":0,"line":3,"status":"wait"}]
+    if state == testState:
+        print("HELLO")
 
     for i in range(len(state.process_states)):
         processState = state.process_states[i]
@@ -73,14 +79,14 @@ def getSuccessors(state:State):
             condition = ns.last_to_enter[l] == i  # last_to_enter[l] == i
             for k in range(len(ns.levels)):
                 condition = condition & (ns.levels[k] >= l)  # levels[k] >= l
-            if not condition:  # if while condition NOT met, we can go to next iteration OR to critical section
+            if not condition:  # if while condition is NOT met, we can go to next iteration OR to critical section
                 if l+1 != ns.n-1:  # if we are not at the last iteration, we can go to next iteration
                     ns.process_states[i]["line"] = 0
                     ns.process_states[i]["it"] = l + 1
                 else:  # if we are at the last iteration, we can enter the critical section
                     ns.process_states[i]["status"] = "critical"
                     ns.process_states[i]["line"] = 4
-            else:
+            else:  # while condition still holds, we must wait
                 ns.process_states[i]["status"] = "wait"
                 ns.process_states[i]["line"] = 3
         elif prevProcessLine == 4:
@@ -137,7 +143,10 @@ def performBFS():
             else:  # state already exists, so we need to store transition from parent to existing state
                 for s2 in allStates:
                     if s == s2:      # find existing duplicate state
-                        allTransitions[s.parent_id] = [s2.id]
+                        if s.parent_id not in allTransitions:
+                            allTransitions[s.parent_id] = [s2.id]
+                        else:
+                            allTransitions[s.parent_id] = allTransitions[s.parent_id] + [s2.id]
 
         if not filteredStates:
             break  # stop if no new states were found
