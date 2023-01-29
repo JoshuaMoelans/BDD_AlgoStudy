@@ -7,7 +7,6 @@ i <- processNr
 1        last_to_enter[l] = i
 2        while last_to_enter[l]=i & there exists k!=i : levels[k]>=l:
 3            wait(i)
-4        end While
-5    critical(i)
-6    levels[i]=-1
+4    critical(i)
+5    levels[i]=-1
 """
