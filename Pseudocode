@@ -1,0 +1,13 @@
+""" PSEUDOCODE
+line    command
+-----
+i <- processNr
+     for l in range(0,n-1)
+0        levels[i] = l
+1        last_to_enter[l] = i
+2        while last_to_enter[l]=i & there exists k!=i : levels[k]>=l:
+3            wait(i)
+4        end While
+5    critical(i)
+6    levels[i]=-1
+"""
