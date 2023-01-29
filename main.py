@@ -56,12 +56,6 @@ def constructChildState(state:State):
 def getSuccessors(state:State):
     parentId = state.id
     sc = []
-    testState = State(2)
-    testState.levels = [0,0]
-    testState.last_to_enter = [1]
-    testState.process_states = [{"it":0,"line":2,"status":"exec"},{"it":0,"line":3,"status":"wait"}]
-    if state == testState:
-        print("HELLO")
 
     for i in range(len(state.process_states)):
         processState = state.process_states[i]
@@ -118,8 +112,8 @@ def saveDot(allStates:set, allTransitions:dict, filename:str):
     with open(f"{filename}.dot", "w") as f:
         f.write(printDot(allStates, allTransitions))
 
-def performBFS():
-    root = State(2)
+def generatePeterson(n):
+    root = State(n)
     allStates = {root}
     allTransitions = dict()  # if 0→[1,2,3] stores {0:[1,2,3]}
 
@@ -153,11 +147,11 @@ def performBFS():
         else:
             newStates = filteredStates
 
-    saveDot(allStates, allTransitions,"TS")
+    saveDot(allStates, allTransitions,f"TS{n}")
 
 
 if __name__ == '__main__':
     start = time.time()
-    performBFS()
+    generatePeterson(n=3)
     end = time.time()
     print(f"Time taken: {round(end-start,3)}s")
