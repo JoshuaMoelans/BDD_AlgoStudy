@@ -59,17 +59,17 @@ def getSuccessors(state:State):
 
     for i in range(len(state.process_states)):
         processState = state.process_states[i]
-        processLine = processState["line"]
+        prevProcessLine = processState["line"]
         l = processState["it"]  # process' iteration counter
         ns = constructChildState(state)
         ns.parent_id = parentId
-        if processLine == 0:
+        if prevProcessLine == 0:
             ns.levels[i] = l  # levels[i] = l
-            ns.process_states[i]["line"] = processLine + 1
-        elif processLine == 1:
+            ns.process_states[i]["line"] = prevProcessLine + 1
+        elif prevProcessLine == 1:
             ns.last_to_enter[l] = i  # last_to_enter[l] = i
-            ns.process_states[i]["line"] = processLine + 1
-        elif processLine == 2 or processLine == 3:
+            ns.process_states[i]["line"] = prevProcessLine + 1
+        elif prevProcessLine == 2 or prevProcessLine == 3:
             condition = ns.last_to_enter[l] == i  # last_to_enter[l] == i
             for k in range(len(ns.levels)):
                 condition = condition & (ns.levels[k] >= l)  # levels[k] >= l
@@ -83,13 +83,13 @@ def getSuccessors(state:State):
             else:
                 ns.process_states[i]["status"] = "wait"
                 ns.process_states[i]["line"] = 3
-        elif processLine == 4:
-            ns.process_states[i]["line"] = processLine + 1
-        elif processLine == 5:
+        elif prevProcessLine == 4:
+            ns.process_states[i]["line"] = 5
+            ns.process_states[i]["status"] = "exec"
+        elif prevProcessLine == 5:
             ns.levels[i] = -1  # levels[i] = -1
             ns.process_states[i]["line"] = 0
             ns.process_states[i]["it"] = 0
-            ns.process_states[i]["status"] = "exec"
 
         sc.append(ns)
     return sc
@@ -130,14 +130,19 @@ def performBFS():
             if s not in allStates:
                 allStates.add(s)
                 filteredStates.append(s)  # store new state to be explored
-                allTransitions[s.parent_id] = allTransitions.get(s.parent_id, []) + [s.id]
+                if s.parent_id not in allTransitions:
+                    allTransitions[s.parent_id] = [s.id]
+                else:
+                    allTransitions[s.parent_id] = allTransitions[s.parent_id] + [s.id]
             else:  # state already exists, so we need to store transition from parent to existing state
                 for s2 in allStates:
                     if s == s2:      # find existing duplicate state
                         allTransitions[s.parent_id] = [s2.id]
 
-        if not filteredStates:  # todo what else? replace newStates with filteredStates?
+        if not filteredStates:
             break  # stop if no new states were found
+        else:
+            newStates = filteredStates
 
     saveDot(allStates, allTransitions,"TS")
 
