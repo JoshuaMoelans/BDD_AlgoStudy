@@ -1,3 +1,5 @@
+import time
+
 stateCounter = 0
 
 import copy
@@ -93,11 +95,14 @@ def getSuccessors(state:State):
     return sc
 
 def printDot(allStates:set, allTransitions:dict):
+    stateIDs = set([s.id for s in allStates])
     out = ""
     out += "digraph G {\n"
     for s in allStates:
         out += s.toDot()
     for t in allTransitions:
+        if t not in stateIDs:
+            continue
         for toState in allTransitions[t]:
             out += f"{t} -> {toState}\n"
     out += "\n}"
@@ -111,6 +116,7 @@ def performBFS():
     root = State(2)
     allStates = {root}
     allTransitions = dict()  # if 0→[1,2,3] stores {0:[1,2,3]}
+
     newStates = [root]
 
     while True:
@@ -130,12 +136,14 @@ def performBFS():
                     if s == s2:      # find existing duplicate state
                         allTransitions[s.parent_id] = [s2.id]
 
-
-        if not filteredStates:
+        if not filteredStates:  # todo what else? replace newStates with filteredStates?
             break  # stop if no new states were found
 
     saveDot(allStates, allTransitions,"TS")
 
 
 if __name__ == '__main__':
+    start = time.time()
     performBFS()
+    end = time.time()
+    print(f"Time taken: {round(end-start,3)}s")
