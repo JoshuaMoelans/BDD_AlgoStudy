@@ -93,7 +93,7 @@ def getSuccessors(state:State):
             condition = (ns.last_to_enter[l] == i)  # last_to_enter[l] == i
             kExists = False
             for k in range(len(ns.levels)):
-                if k != i & ns.levels[k] >= l:
+                if (k != i) & (ns.levels[k] >= l):
                     kExists = True
             condition = condition & kExists
             if not condition:  # if while condition is NOT met, we can go to next iteration OR to critical section
@@ -210,7 +210,7 @@ def generatePeterson(n):
 
 if __name__ == '__main__':
     start = time.time()
-    P = generatePeterson(n=2)
+    P = generatePeterson(n=3)
     P.toDot()
     P.toHOA()
     end = time.time()
