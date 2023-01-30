@@ -53,7 +53,7 @@ class LamportState:
                     ns.process_states[i]["status"] = "wait2"
                     ns.process_states[i]["line"] = 4
             elif prevProcessLine == 5:
-                ns.process_states[i]["line"] = 5
+                ns.process_states[i]["line"] = 6
                 ns.process_states[i]["status"] = "exec"
             elif prevProcessLine == 6:
                 ns.number[i] = 0
