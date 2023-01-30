@@ -128,7 +128,8 @@ def printDot(allStates:set, allTransitions:dict):
         if t not in stateIDs:
             continue
         for toState in allTransitions[t]:
-            out += f"{t} -> {toState}\n"
+            if toState != t:
+                out += f"{t} -> {toState}\n"
     out += "\n}"
     return out
 
@@ -166,7 +167,8 @@ class TS:
             outString += s.toHOA() + "\n"
             s.id = oldId
             for outgoing in self.transitions[s.id]:
-                outString += f"  {seqmap[outgoing]}\n"
+                if outgoing != s.id:
+                    outString += f"  {seqmap[outgoing]}\n"
         outString += "--END--"
         with open(f"./output/TS_{self.name}.hoa", "w") as f:
             f.write(outString)
