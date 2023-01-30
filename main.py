@@ -23,7 +23,7 @@ class State:
         return  out
 
     def toHOA(self):
-        label = f"t"
+        label = ""
         processId = 0
         for pState in self.process_states:
             offset = 0
@@ -31,8 +31,9 @@ class State:
                 offset = 1
             elif pState["status"] == "critical":
                 offset = 2
-            label += f"&{processId*3+offset}"
+            label += f"{processId*3+offset}&"
             processId += 1
+        label=label[:-1]
         return f"State: [{label}] {self.id}"
 
     def toDot(self):
