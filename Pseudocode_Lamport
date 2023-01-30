@@ -1,0 +1,15 @@
+""" PSEUDOCODE
+line    command
+i <- processNr
+-----
+0   entering[i] = true
+    number[i] = 1+max(number)
+    entering[i] = false
+    for j in range(1..n)
+1       while entering[j]:
+            wait(i,1)
+2       while number[j]!=0 & ((number[j],j) < (number[i],i))
+            wait(i,2)
+3   critical(i)
+4   number[i] = 0
+"""
