@@ -89,6 +89,7 @@ def getSuccessors(state:State):
         elif prevProcessLine == 1:
             ns.last_to_enter[l] = i  # last_to_enter[l] = i
             ns.process_states[i]["line"] = 2
+            ns.process_states[i]["status"] = "wait"
         elif prevProcessLine == 2:
             condition = (ns.last_to_enter[l] == i)  # last_to_enter[l] == i
             kExists = False
@@ -210,7 +211,7 @@ def generatePeterson(n):
 
 if __name__ == '__main__':
     start = time.time()
-    P = generatePeterson(n=3)
+    P = generatePeterson(n=2)
     P.toDot()
     P.toHOA()
     end = time.time()
