@@ -25,14 +25,20 @@ class State:
     def toHOA(self):
         label = ""
         processId = 0
+        critCount = 0
         for pState in self.process_states:
             offset = 0
-            if pState["status"] == "wait":
+            if pState["status"] == "exec":
+                offset = 0
+            elif pState["status"] == "wait":
                 offset = 1
             elif pState["status"] == "critical":
                 offset = 2
+                critCount += 1
             label += f"{processId*3+offset}&"
             processId += 1
+        if critCount > 1:
+            print("HERE")
         label=label[:-1]
         return f"State: [{label}] {self.id}"
 
@@ -79,11 +85,11 @@ def getSuccessors(state:State):
         ns.parent_id = parentId
         if prevProcessLine == 0:
             ns.levels[i] = l  # levels[i] = l
-            ns.process_states[i]["line"] = prevProcessLine + 1
+            ns.process_states[i]["line"] = 1
         elif prevProcessLine == 1:
             ns.last_to_enter[l] = i  # last_to_enter[l] = i
-            ns.process_states[i]["line"] = prevProcessLine + 1
-        elif prevProcessLine == 2 or prevProcessLine == 3:
+            ns.process_states[i]["line"] = 2
+        elif prevProcessLine == 2:
             condition = (ns.last_to_enter[l] == i)  # last_to_enter[l] == i
             kExists = False
             for k in range(len(ns.levels)):
@@ -91,7 +97,7 @@ def getSuccessors(state:State):
                     kExists = True
             condition = condition & kExists
             if not condition:  # if while condition is NOT met, we can go to next iteration OR to critical section
-                if l+1 != ns.n-1:  # if we are not at the last iteration, we can go to next iteration
+                if l < ns.n-2:  # if we are not at the last iteration, we can go to next iteration
                     ns.process_states[i]["line"] = 0
                     ns.process_states[i]["it"] = l + 1
                 else:  # if we are at the last iteration, we can enter the critical section
@@ -99,7 +105,7 @@ def getSuccessors(state:State):
                     ns.process_states[i]["line"] = 4
             else:  # while condition still holds, we must wait
                 ns.process_states[i]["status"] = "wait"
-                ns.process_states[i]["line"] = 3
+                ns.process_states[i]["line"] = 2
         elif prevProcessLine == 4:
             ns.process_states[i]["line"] = 5
             ns.process_states[i]["status"] = "exec"
