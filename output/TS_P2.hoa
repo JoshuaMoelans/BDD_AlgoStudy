@@ -2,7 +2,7 @@ HOA: v1
 States: 40
 Start: 0
 Acceptance: 1 Fin(0)
-AP: e0 w0 c0 e1 w1 c1
+AP: 6 "e0" "w0" "c0" "e1" "w1" "c1"
 --BODY--
 State: [t&0&3] 0
   1

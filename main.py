@@ -145,9 +145,9 @@ class TS:
         outString += f"States: {len(self.states)}\n"
         outString += "Start: 0\n"
         outString += "Acceptance: 1 Fin(0)\n"  # todo reason about Acceptance condition
-        outString += "AP:"
+        outString += f"AP: {self.n*3}"
         for i in range(self.n):
-            outString += f" e{i} w{i} c{i}"
+            outString += f" \"e{i}\" \"w{i}\" \"c{i}\""
         outString += "\n--BODY--\n"
         for s in self.states:
             oldId = s.id
