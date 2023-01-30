@@ -22,6 +22,19 @@ class State:
             out += f"[l:{ps['it']}|#{ps['line']}|{ps['status']}]"
         return  out
 
+    def toHOA(self):
+        label = f"t"
+        processId = 0
+        for pState in self.process_states:
+            offset = 0
+            if pState["status"] == "wait":
+                offset = 1
+            elif pState["status"] == "critical":
+                offset = 2
+            label += f"&{processId*3+offset}"
+            processId += 1
+        return f"State: [{label}] {self.id}"
+
     def toDot(self):
         return f"{self.id} [label=\"{self.simpleString()}\"]\n"
 
@@ -109,8 +122,43 @@ def printDot(allStates:set, allTransitions:dict):
     return out
 
 def saveDot(allStates:set, allTransitions:dict, filename:str):
-    with open(f"{filename}.dot", "w") as f:
+    with open(f"./output/{filename}.dot", "w") as f:
         f.write(printDot(allStates, allTransitions))
+
+class TS:
+    def __init__(self, states, transitions,name="TS",n=2):
+        self.states = states
+        self.transitions = transitions
+        self.name = name
+        self.n = n
+
+    def toDot(self):
+        saveDot(self.states, self.transitions, f"TS_{self.name}")
+
+    def toHOA(self):
+        seqmap = {}  # store sequential mapping of states for HOA parsing
+        sc = 0
+        for s in self.states:
+            seqmap[s.id] = sc
+            sc += 1
+        outString = "HOA: v1\n"
+        outString += f"States: {len(self.states)}\n"
+        outString += "Start: 0\n"
+        outString += "Acceptance: 1 Fin(0)\n"  # todo reason about Acceptance condition
+        outString += "AP:"
+        for i in range(self.n):
+            outString += f" e{i} w{i} c{i}"
+        outString += "\n--BODY--\n"
+        for s in self.states:
+            oldId = s.id
+            s.id = seqmap[s.id]
+            outString += s.toHOA() + "\n"
+            s.id = oldId
+            for outgoing in self.transitions[s.id]:
+                outString += f"  {seqmap[outgoing]}\n"
+        outString += "--END--"
+        with open(f"./output/TS_{self.name}.hoa", "w") as f:
+            f.write(outString)
 
 def generatePeterson(n):
     root = State(n)
@@ -147,11 +195,13 @@ def generatePeterson(n):
         else:
             newStates = filteredStates
 
-    saveDot(allStates, allTransitions,f"TS{n}")
+    return TS(allStates, allTransitions, name=f"P{n}",n=n)
 
 
 if __name__ == '__main__':
     start = time.time()
-    generatePeterson(n=3)
+    P = generatePeterson(n=2)
+    P.toDot()
+    P.toHOA()
     end = time.time()
     print(f"Time taken: {round(end-start,3)}s")
