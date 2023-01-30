@@ -201,7 +201,7 @@ def generatePeterson(n):
 
 if __name__ == '__main__':
     start = time.time()
-    P = generatePeterson(n=2)
+    P = generatePeterson(n=3)
     P.toDot()
     P.toHOA()
     end = time.time()
