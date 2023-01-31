@@ -29,14 +29,12 @@ class LamportState:
                 ns.process_states[i]["line"] = 1
             elif prevProcessLine == 1:
                 ns.number[i] = (1+max(ns.number)) % (ns.n+1)  # number[l] = (1+max(number))%(n+1)
-                ns.process_states[i]["line"] = 2
                 ns.process_states[i]["status"] = "exec"
-            elif prevProcessLine == 2:
                 ns.entering[i] = False # entering[i] = false
-                ns.process_states[i]["line"] = 3
+                ns.process_states[i]["line"] = 3 # grouping lines 1 & 2 as a single command
             elif prevProcessLine == 3:
                 if not ns.entering[j]:  # if while condition is NOT met, we can go to next wait
-                        ns.process_states[i]["status"] = "wait2"
+                        ns.process_states[i]["status"] = "exec"
                         ns.process_states[i]["line"] = 4
                 else:  # while condition still holds, we must wait
                     ns.process_states[i]["status"] = "wait1"
@@ -54,10 +52,8 @@ class LamportState:
                     ns.process_states[i]["status"] = "wait2"
                     ns.process_states[i]["line"] = 4
             elif prevProcessLine == 5:
-                ns.process_states[i]["line"] = 6
-                ns.process_states[i]["status"] = "exec"
-            elif prevProcessLine == 6:
                 ns.number[i] = 0
+                ns.process_states[i]["status"] = "exec"
                 ns.process_states[i]["line"] = 0
                 ns.process_states[i]["it"] = 0
 
