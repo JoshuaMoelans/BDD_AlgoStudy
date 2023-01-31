@@ -8,7 +8,7 @@ i <- processNr
     for j in range(1..n)
 3       while entering[j]:
             wait(i,1)
-4       while number[j]!=0 & ((number[j],j) < (number[i],i))
+4       while (number[j]!=0 & ((number[j],j) < (number[i],i)))
             wait(i,2)
 5   critical(i)
 6   number[i] = 0

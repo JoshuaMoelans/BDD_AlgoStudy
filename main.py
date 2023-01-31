@@ -104,7 +104,7 @@ def generateTS(n,algo="Peterson"):
 if __name__ == '__main__':
     start = time.time()
     # P = generateTS(n=2,algo="Peterson")
-    P = generateTS(n=2,algo="Lamport")
+    P = generateTS(n=3,algo="Lamport")
     P.toDot()
     P.toHOA()
     end = time.time()

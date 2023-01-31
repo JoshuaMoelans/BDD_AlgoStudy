@@ -28,7 +28,7 @@ class LamportState:
                 ns.entering[i] = True # entering[i] = true
                 ns.process_states[i]["line"] = 1
             elif prevProcessLine == 1:
-                ns.number[i] = (1+max(ns.number)) % ns.n+1  # last_to_enter[l] = i
+                ns.number[i] = (1+max(ns.number)) % (ns.n+1)  # number[l] = (1+max(number))%(n+1)
                 ns.process_states[i]["line"] = 2
                 ns.process_states[i]["status"] = "exec"
             elif prevProcessLine == 2:
@@ -42,12 +42,13 @@ class LamportState:
                     ns.process_states[i]["status"] = "wait1"
                     ns.process_states[i]["line"] = 3
             elif prevProcessLine == 4:
-                if not ((ns.number[j] != 0) and ((ns.number[j],j) < (ns.number[i],i)) ): # WHILE condition is not met, next iteration or Critical section
+                if not ((ns.number[j] != 0) and ((ns.number[j], j) < (ns.number[i], i))): # WHILE condition is not met, next iteration or Critical section
                     if j == ns.n-1:
                         ns.process_states[i]["line"] = 5
                         ns.process_states[i]["status"] = "critical"
                     else:
                         ns.process_states[i]["line"] = 0
+                        ns.process_states[i]["status"] = "exec"
                         ns.process_states[i]["it"] = j + 1
                 else:
                     ns.process_states[i]["status"] = "wait2"
@@ -94,8 +95,8 @@ class LamportState:
                 critCount += 1
             label += f"{processId*3+offset}&"
             processId += 1
-        if critCount > 1:
-            print("HERE")
+        # if critCount > 1:
+        #     print("HERE")
         label=label[:-1]
         return f"State: [{label}] {self.id}"
 
